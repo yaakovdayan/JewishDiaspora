@@ -3,6 +3,16 @@ from django.core.mail import send_mail
 from django.utils.translation import ugettext as _
 
 from .models import ArtifactContact
+from django.contrib.auth.models import User
+from django import forms
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        module = User
+        fields = ['username', 'email', 'password']
+
 
 
 class ContactForm(forms.ModelForm):

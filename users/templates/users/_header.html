@@ -1,0 +1,76 @@
+{% load i18n static jewishdiaspora %}
+
+<header>
+    <div class="header-top"{% if page_banner %} style="background-image: url({{ page_banner.image.url }});"{% endif %}>
+        <div class="logo float-left">
+            <a href="{% url 'home' %}">
+                {% svg_icon 'logo' rtl=LANGUAGE_BIDI %}
+            </a>
+        </div>
+        <div class="top-links float-right">
+            <ul class="nav justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">
+                        {% trans 'About' %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact' %}">
+                        {% trans 'Contact' %}
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false">
+                        {% svg_icon 'flag' 'flag-svg' rtl=LANGUAGE_BIDI %}
+                    </a>
+                    <div id="lang-switcher" class="dropdown-menu">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        <form id="lang-form" action="{% url 'set_language' %}" method="post">{% csrf_token %}
+                            <input name="next" type="hidden" value="{{ redirect_to }}"/>
+                            <input name="language" type="hidden" id="id_language" value="{{ LANGUAGE_CODE }}"/>
+                        </form>
+                        <a class="dropdown-item" href="#" data-lang="en">
+                            {% svg_icon 'flag' 'flag-svg' rtl=False %}
+                        </a>
+                        <a class="dropdown-item" href="#" data-lang="he">
+                            {% svg_icon 'flag' 'flag-svg' rtl=True %}
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <a href="{% url 'artifacts:create' %}" class="new-artifact">
+            {% trans 'Upload artifact' %}
+        </a>
+    </div>
+    <div class="header-bottom">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light w-100">
+            <div class="collapse navbar-collapse" id="bottom-navbar">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item{% if page_name == 'home' %} active{% endif %}">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            {% trans 'BH collections' %}{% if page_name == 'home' %}
+                                <span class="sr-only">(current)</span>{% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item{% if page_name == 'users_artifact_list' %} active{% endif %}">
+                        <a class="nav-link" href="{% url 'artifacts:users' %}">
+                            {% trans 'Users collections' %}{% if page_name == 'users_artifact_list' %}
+                                <span class="sr-only">(current)</span>{% endif %}</a>
+                    </li>
+                    <li class="nav-item{% if page_name == 'all_artifacts' %} active{% endif %}">
+                        <a class="nav-link" href="#">{% trans 'All' %}{% if page_name == 'all_artifacts' %}
+                            <span class="sr-only">(current)</span>{% endif %}</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">{% trans 'Filters' %}</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</header>

@@ -10,6 +10,7 @@ from users import views as user_views
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
+    path('register/', user_views.UserFormView.as_view(), name='register'),
     path('contact', user_views.ContactView.as_view(), name='contact'),
     path('about', views.AboutView.as_view(), name='about'),
     path('admin/', admin.site.urls),

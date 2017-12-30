@@ -176,3 +176,7 @@ class ArtifactImageCreateView(JewishDiasporaUIMixin, CreateView):
     page_title = _('Artifact image create')
     page_name = 'artifact_image_create'
     fields = '__all__'
+
+
+
+

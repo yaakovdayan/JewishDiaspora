@@ -1,7 +1,8 @@
 from django import forms
 from django.forms import inlineformset_factory
 from django_countries.widgets import CountrySelectWidget, LazySelectMultiple
-
+from django.contrib.auth.models import User
+from django import forms
 from .models import Artifact, ArtifactImage, OriginArea, ArtifactMaterial
 
 
