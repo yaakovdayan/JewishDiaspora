@@ -113,7 +113,7 @@ class Artifact(models.Model):
     display_donor_name = models.BooleanField(_('Display donor name?'), default=False)
 
     def __str__(self):
-        return self.name_he if self.name_he else self.name_en
+            return self.name_he if self.name_he else self.name_en
 
     def get_years(self):
         if self.year_from:
