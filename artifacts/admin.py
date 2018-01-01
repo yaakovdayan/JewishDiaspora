@@ -15,13 +15,13 @@ class ArtifactAdmin(admin.ModelAdmin):
 
 
 class PageBannerAdmin(admin.ModelAdmin):
-    list_display = ('page', 'main_text', 'credit', 'active')
-    list_display_links = ('page', 'main_text', 'credit', 'active')
+    list_display = ('page', 'main_text_he', 'main_text_en', 'credit_he', 'credit_en', 'active')
+    list_display_links = ('page', 'main_text_he', 'main_text_en', 'credit_he', 'credit_en', 'active')
 
 
 class OriginAreaAdmin(admin.ModelAdmin):
-    list_display = ('title', 'countries_list')
-    list_display_links = ('title', 'countries_list')
+    list_display = ('title_he', 'title_en', 'countries_list')
+    list_display_links = ('title_he', 'title_en', 'countries_list')
 
     def countries_list(self, obj):
         return ",".join([x.name for x in obj.countries])

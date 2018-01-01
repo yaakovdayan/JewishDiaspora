@@ -1,0 +1,25 @@
+{% extends 'artifacts/base.html' %}
+{% load static jewishdiaspora i18n %}
+
+{% block content %}
+    <div class="row justify-content-md-center">
+        <div class="col col-md-8">
+            <div class="steps clearfix">
+                <span class="step step_one">1</span>
+                <span class="step">2</span>
+                <span class="step">3</span>
+            </div>
+            <h4>
+                {% blocktrans trimmed %}
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s
+                {% endblocktrans %}
+            </h4>
+            <h1 class="text-center step_title">
+                1. {% trans 'About yourself' %}
+            </h1>
+        </div>
+        <div class="col col-md-8">
+            {% include '_base_form.html' with form=form submit_text=_('Continue') labels=True %}
+        </div>
+    </div>
+{% endblock %}

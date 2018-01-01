@@ -2,6 +2,7 @@
 {% load static jewishdiaspora i18n %}
 
 {% block content %}
+<<<<<<< HEAD
 
 <div class="row justify-content-md-center">
     <div class="col col-md-8">
@@ -26,6 +27,33 @@
             </p>
             {% endfor %}
 
+=======
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <div class="col col-md-8">
+                <h1>{{ page_title }}</h1>
+            </div>
+
+            <div class="col col-md-8">
+                <p>
+                    <a href="{% url 'artifacts:material_create' %}" class="btn btn-info btn-lg">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i> {% trans 'Add new material' %}
+                    </a>
+                </p>
+                {% for object in materials %}
+                    <p>
+                        {{ object|bd:'title' }}
+                        <a href="{% url 'artifacts:material_update' object.id %}">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+
+                        {% csrf_token %}
+                        <a href="{% url 'artifacts:material_delete' object.id %}" method="post">
+                            <i class="fa fa-times" aria-hidden="true"></i></a>
+                    </p>
+                {% endfor %}
+
+            </div>
+>>>>>>> 91b49cf1f0108ef05fdc8e278a3f9ada28b6efab
         </div>
     </div>
 </div>

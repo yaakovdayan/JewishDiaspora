@@ -1,0 +1,20 @@
+{% extends 'artifacts/base.html' %}
+{% load static jewishdiaspora i18n %}
+
+{% block content %}
+    <div class="row justify-content-md-center">
+        <div class="col col-md-8">
+            <div class="steps clearfix">
+                <span class="step">1</span>
+                <span class="step step_two">2</span>
+                <span class="step">3</span>
+            </div>
+            <h1 class="text-center step_title">
+                2. {% trans 'Info about your item' %}
+            </h1>
+        </div>
+        <div class="col col-md-8">
+            {% include '_base_form.html' with form=form submit_text=_('Continue') labels=True %}
+        </div>
+    </div>
+{% endblock %}

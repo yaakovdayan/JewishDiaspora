@@ -1,9 +1,12 @@
-from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth import login
+from django.urls import reverse_lazy, reverse
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from django.utils.translation import ugettext as _
-from artifacts.forms import ArtifactForm, UserArtifactForm, ArtifactImageFormSet, OriginAreaForm, ArtifactMaterialForm
+from artifacts.forms import ArtifactForm, UserArtifactForm, ArtifactImageFormSet, OriginAreaForm, ArtifactMaterialForm, \
+    UserForm, ArtifactImagesForm
 from artifacts.models import Artifact, ArtifactStatus, ArtifactImage, PageBanner, OriginArea, ArtifactMaterial
 from jewishdiaspora.base_views import JewishDiasporaUIMixin
+from users.models import User
 
 
 class PersonalInformationRegistrationPage(JewishDiasporaUIMixin, TemplateView):
@@ -16,6 +19,14 @@ class ArtifactInformationRegistrationPage(JewishDiasporaUIMixin, TemplateView):
 
 class ArtifactsImagesRegistrationPage(JewishDiasporaUIMixin, TemplateView):
     template_name = 'artifacts/sign_in_third_page.html'
+
+
+class UserArtifactInformationPage(JewishDiasporaUIMixin, DetailView):
+    template_name = 'artifacts/user_artifact_information.html'
+    model = Artifact
+    context_object_name = 'artifact'
+    page_title = _('Artifact detail')
+    page_name = 'artifact_detail'
 
 
 class TheNewForm(JewishDiasporaUIMixin, TemplateView):
@@ -60,48 +71,126 @@ class ArtifactUsersListView(JewishDiasporaUIMixin, ListView):
         return super(ArtifactUsersListView, self).get_queryset().filter(status=ArtifactStatus.APPROVED, is_private=True)
 
 
+class ArtifactFullListView(JewishDiasporaUIMixin, ListView):
+    template_name = 'artifacts/artifact_full_list.html'
+    model = Artifact
+    context_object_name = 'artifacts'
+    page_title = _('All artifacts list')
+    page_name = 'all_artifact_list'
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_superuser:
+                return super(ArtifactFullListView, self).get_queryset()
+
+        return super(ArtifactFullListView, self).get_queryset().filter(status=ArtifactStatus.APPROVED)
+
+
 class ArtifactDetailView(JewishDiasporaUIMixin, DetailView):
-    template_name = 'artifacts/artifact_detail.html'
     model = Artifact
     context_object_name = 'artifact'
     page_title = _('Artifact detail')
     page_name = 'artifact_detail'
 
+    def get_template_names(self):
+        if self.object.is_private:
+            return 'artifacts/user_artifact_detail.html'
+        return 'artifacts/artifact_detail.html'
 
-class ArtifactCreateView(JewishDiasporaUIMixin, CreateView):
-    template_name = 'artifacts/artifact_create.html'
-    model = Artifact
-    success_url = reverse_lazy('artifacts:list')
+
+class ArtifactCreateStepOneView(JewishDiasporaUIMixin, FormView):
+    template_name = 'artifacts/artifact_create_step_one.html'
+    form_class = UserForm
+    success_url = reverse_lazy('artifacts:create_step_two')
     page_title = _('Artifact create')
     page_name = 'artifact_create'
 
-    def get_form_class(self):
+    def get_initial(self):
         if self.request.user.is_authenticated:
-            if self.request.user.is_superuser:
-                return ArtifactForm
+            return {
+                'name': self.request.user.full_name,
+                'email': self.request.user.email,
+                'phone_number': self.request.user.phone,
+            }
+
+    def form_valid(self, form):
+        name = form.cleaned_data.get('name')
+        email = form.cleaned_data.get('email')
+        phone = form.cleaned_data.get('phone_number')
+
+        if not self.request.user.is_authenticated:
+            password = User.objects.make_random_password()
+            user = User.objects.create_user(
+                email=email,
+                password=password,
+                full_name=name,
+                phone=phone
+            )
+            # Send email
+            user.send_registration_email(password)
+            # Login user into session
+            login(self.request, user)
+
+        return super().form_valid(form)
+
+
+class ArtifactCreateStepTwoView(JewishDiasporaUIMixin, CreateView):
+    template_name = 'artifacts/artifact_create_step_two.html'
+    model = Artifact
+    page_title = _('Artifact detail')
+    page_name = 'artifact_detail'
+    form_description = _('Some Artifact Description')
+
+    def get_initial(self):
+        if self.request.user.is_authenticated and not self.request.user.is_superuser:
+            return {
+                'donor_name_he': self.request.user.full_name,
+                'donor_name_en': self.request.user.full_name,
+            }
+
+    def get_form_class(self):
+        if self.request.user.is_superuser:
+            return ArtifactForm
 
         return UserArtifactForm
+
+    def get_success_url(self):
+        return reverse('artifacts:create_step_three', args=[self.object.id])
+
+    def form_valid(self, form):
+        if not self.request.user.is_superuser:
+            form.instance.is_private = True
+        form.instance.uploaded_by = self.request.user
+        return super().form_valid(form)
+
+
+class ArtifactCreateStepThreeView(JewishDiasporaUIMixin, FormView):
+    template_name = 'artifacts/artifact_create_step_three.html'
+    form_class = ArtifactImagesForm
+    page_title = _('Artifact Images')
+    page_name = 'artifact_images'
+    success_url = reverse_lazy('home')
 
     def form_valid(self, form):
         context = self.get_context_data()
         artifact_image_formset = context['artifact_image_formset']
 
         if artifact_image_formset.is_valid():
-            if self.request.user.is_authenticated:
-                form.instance.uploaded_by = self.request.user
-                if not self.request.user.is_superuser:
-                    form.instance.is_private = True
-            self.object = form.save()
-            artifact_image_formset.instance = self.object
+            artifact = Artifact.objects.get(pk=self.kwargs['pk'])
+            artifact_image_formset.instance = artifact
             artifact_image_formset.save()
             return super().form_valid(form)
-            # return redirect(self.success_url)
 
-        return super().form_invalid(form)
-        # return self.render_to_response(self.get_context_data(form=form))
+        return self.render_to_response(
+            self.get_context_data(
+                form=form,
+                artifact_image_formset=artifact_image_formset
+            )
+        )
+        # return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
-        context = super(ArtifactCreateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if self.request.POST:
             context['artifact_image_formset'] = ArtifactImageFormSet(self.request.POST, self.request.FILES,
                                                                      prefix='artifact_image_formset')
@@ -170,7 +259,7 @@ class ArtifactMaterialListView(JewishDiasporaUIMixin, ListView):
 
 
 class ArtifactImageCreateView(JewishDiasporaUIMixin, CreateView):
-    template_name = 'artifacts/artifact_create.html'
+    template_name = 'artifacts/artifact_create_step_one.html'
     model = ArtifactImage
     success_url = reverse_lazy('artifacts:list')
     page_title = _('Artifact image create')

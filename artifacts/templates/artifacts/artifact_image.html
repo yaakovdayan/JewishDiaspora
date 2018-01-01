@@ -1,13 +1,20 @@
 {% extends 'artifacts/base.html' %}
-{% load static jewishdiaspora i18n %}
+{% load static i18n %}
 
 {% block content %}
-    <div class="row justify-content-md-center">
-        <div class="col col-md-8">
-            <h1>{{ page_title }}</h1>
+    <div class="container">
+       <div class="col col-md-8">
+            <h5> TAB_PLACE_HOLDER  </h5>
         </div>
+
         <div class="col col-md-8">
-            {% include '_base_form.html' with form=form with_files=True submit_text=_('Save') labels=True formset=artifact_image_formset %}
+           <h5>{{ form_description }}</h5>
+           <form action="" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input id="addImage" type="button" value="add additional image" onclick="doFunction();" />
+                <input type="submit" value="Submit" />
+            </form>
         </div>
     </div>
 {% endblock %}

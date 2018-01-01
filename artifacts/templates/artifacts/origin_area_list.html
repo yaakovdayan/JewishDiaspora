@@ -1,11 +1,11 @@
 {% extends 'artifacts/base.html' %}
-{% load static i18n %}
+{% load static i18n jewishdiaspora %}
 
 {% block content %}
     <div class="card">
         {% for area in areas %}
             <ul>
-                <li>{{ area.title }}</li>
+                <li>{{ area|bd:'title' }}</li>
                 {% if area.countries %}
                     <li>
                         <ul>

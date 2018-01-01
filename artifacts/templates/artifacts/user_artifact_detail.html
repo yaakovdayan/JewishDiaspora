@@ -63,7 +63,8 @@
             <div class="row">
                 {% for image in artifact.images.all %}
                     <div class="col-6 col-md-3">
-                        <img src="{{ image.image.url }}" class="rounded img-thumbnail" alt="{{ artifact.name }}">
+                        <img src="{{ image.image.url }}" class="rounded img-thumbnail"
+                             alt="{{ artifact|bd:'name' }}">
                     </div>
                 {% endfor %}
             </div>

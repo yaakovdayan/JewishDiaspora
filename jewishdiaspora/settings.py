@@ -43,7 +43,7 @@ INSTALLED_APPS = [
 
     # 3rd-party:
     'authtools',
-    'taggit', # todo: safely remove later.
+    'taggit',  # todo: safely remove later.
     'django_countries',
     'django_extensions',
 ]
@@ -120,15 +120,15 @@ FILE_UPLOAD_PERMISSIONS = 0o664
 # LANGUAGE_CODE = 'en-us'
 
 LANGUAGES = [
-    ('en-us', _('English')),
     ('he', _('Hebrew')),
+    ('en', _('English')),
 ]
 
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'jewishdiaspora', 'locale'),
 )
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Jerusalem'
 
 USE_I18N = True
 

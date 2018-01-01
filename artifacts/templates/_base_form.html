@@ -8,6 +8,9 @@
             {{ form.non_field_errors.as_text }}
         </div>
     {% endif %}
+    {% if formset %}
+        {% include '_base_formset.html' with form=artifact_image_formset %}
+    {% endif %}
     {% for hidden in form.hidden_fields %}
         {{ hidden }}
     {% endfor %}
@@ -38,10 +41,6 @@
         {% endif %}
         </div>
     {% endfor %}
-    {% if formset %}
-        <hr>
-        {% include '_base_formset.html' with form=artifact_image_formset %}
-    {% endif %}
     <div class="form-group">
         <button type="submit" class="btn btn-{{ button_color|default:"primary" }}">
             {{ submit_text|default:_('Submit') }}

@@ -1,5 +1,5 @@
 {% extends 'artifacts/base.html' %}
-{% load static i18n %}
+{% load static i18n jewishdiaspora %}
 
 {% block content %}
     <div class="row">
@@ -8,10 +8,10 @@
                 <div class="card {% if forloop.counter in bigs %}big{% else %}small {% cycle 'first' 'last' %}{% endif %}">
                     <img class="card-img-top"
                          src="{% if artifact.get_cover_image %}{{ artifact.get_cover_image.url }}{% endif %}"
-                         alt="{{ artifact.name }}">
+                         alt="{{ artifact|bd:'name' }}">
                     <a class="text-center d-block" href="{% url 'artifacts:detail' artifact.id %}">
-                        {{ artifact.name }}<br>
-                        {{ artifact.origin_country.name }}, {{ artifact.year_era }}
+                        {{ artifact|bd:'name' }}<br>
+                        {{ artifact.origin_country.name }}{% if artifact.get_years %}, {{ artifact.get_years }}{% endif %}
                     </a>
                 </div>
                 {% if forloop.counter|divisibleby:3 %}
