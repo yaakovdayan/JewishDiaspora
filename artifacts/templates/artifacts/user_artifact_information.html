@@ -5,13 +5,15 @@
 <div class="container">
 
     <div class="row">
-        <div class="col-8">
+        <div class="col-12 col-md-8">
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <img class="d-block w-100" src="{{ artifact.get_first_image.image.url }}">
                         <h5>{{ artifact|bd:'name' }}</h5>
-                        <p>{{ artifact.get_first_image.description }}</p>
+                        <p>{{ artifact.get_first_image.description }}
+
+                        </p>
                     </div>
                     {% for image in artifact.get_rest_images %}
                     <div class="carousel-item">
@@ -33,19 +35,35 @@
             </div>
         </div>
 
-        <div class="col-4">
+        <div class="col-12 col-md-4">
             <div class="list-group">
                 {% for image in artifact.get_rest_images %}
                 <div class="card" style="width: 10rem; ">
                     <img class="card-img-top" src="{{ image.image.url }}">
-                    {% endfor %}
                 </div>
+                    {% endfor %}
             </div>
         </div>
 
 
     </div>
 
-
 </div>
+</div>
+    <div class="row">
+        <div class="col-12">
+                                    -----------------------
+                        <p>
+                            {% trans 'Donor name' %} - {{ artifact.donor_name }}
+                            <br>
+                            {% trans 'Origin country' %} - {{artifact.origin_country }}
+                            <br>
+                            {% trans 'Year' %} - {{artifact.year_era }}
+                            <br>
+                            {% trans 'Materials' %} - {{ artifact.artifact_materials.all|string_from_list }}
+
+                        </p>
+
+        </div>
+    </div>
 {% endblock %}

@@ -125,6 +125,10 @@ class Artifact(models.Model):
             return self.year_to
         return None
 
+    def get_materials_list(self):
+        return ",".join([x.title_he for x in self.artifact_materials.all()])
+
+
     def get_all_tags(self):
         artifact_type = [self.artifact_type.title_he] if self.artifact_type else []
         artifact_materials = [x.title_he for x in self.artifact_materials.all()]
@@ -162,7 +166,7 @@ class ArtifactImage(models.Model):
     is_cover = models.BooleanField(_('Cover image?'), default=False)
 
     def __str__(self):
-        return f'[{self.id}] {self.artifact.name}'
+        return f'[{self.id}] {self.artifact.name_he}'
 
 
 class ArtifactImageCoord(models.Model):

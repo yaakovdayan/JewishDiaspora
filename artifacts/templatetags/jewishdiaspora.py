@@ -70,3 +70,11 @@ def bidi(instance, field):
 def bd(instance, field):
     lang = translation.get_language()[:2]
     return getattr(instance, field + "_" + lang)
+
+
+@register.filter
+def string_from_list(instance):
+    lang = translation.get_language()[:2]
+    if lang == 'en':
+        return ",".join([x.title_en for x in instance])
+    return ", ".join([x.title_he for x in instance])
